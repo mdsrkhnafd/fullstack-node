@@ -1,0 +1,23 @@
+{
+  "name": "fullstack-node",
+  "version": "1.0.0",
+  "description": "Fullstack NodeJS Project",
+  "homepage": "https://github.com/mdsrkhnafd/fullstack-node#readme",
+  "bugs": {
+    "url": "https://github.com/mdsrkhnafd/fullstack-node/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdsrkhnafd/fullstack-node.git"
+  },
+  "license": "MIT",
+  "author": "Cloudaffle",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
+}
