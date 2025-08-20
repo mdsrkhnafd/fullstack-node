@@ -1,0 +1,11 @@
+PATCH http://localhost:3001/tasks
+Content-Type: application/json
+
+{
+  "_id" : "6892ef0df0a37c9912220deb",
+  "title": "Newly Update Task",
+  "dueDate" : "2025-01-01T12:00:00Z",
+  "description": "Update the task with new details",
+  "priority": "normal",
+  "status": "todo"
+}

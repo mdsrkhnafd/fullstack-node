@@ -1,0 +1,11 @@
+POST http://localhost:3001/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODk1YzVkMjQwMGRlYjhiY2UzOTVjNDYiLCJlbWFpbCI6Im1hcmtAZG9lLmNvbSIsImlhdCI6MTc1NDY1MzUxNCwiZXhwIjoxNzU0Njk2NzE0fQ.KUCu0y4Cr42Km5ol3DAG4n_YFseLaJQPoqbNI9RNAT8
+
+{
+  "title": "Task created by a User again",
+  "dueDate" : "2025-01-01T12:00:00Z",
+  "description": "This is a new task to be added.",
+  "priority": "normal",
+  "status": "todo"
+}
