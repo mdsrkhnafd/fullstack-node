@@ -8,39 +8,47 @@ async function getTasksProvider(req, res) {
 
   try {
     const totalTasks = await Task.countDocuments();
+    const completedTasks = await Task.countDocuments({ status: "completed" });
+    const inProgressTasks = await Task.countDocuments({ status: "inProgress" });
+    const todoTasks = await Task.countDocuments({ status: "todo" });
     const currentPage = data.page ? data.page : 1;
     const limit = data.limit ? data.limit : 5; // Default limit to 10 if not provided
     const order = data.order ? data.order : "asc"; // Default order to 'asc' if not provided
     const totalPages = Math.ceil(totalTasks / limit);
     const nextPage = currentPage === totalPages ? currentPage : currentPage + 1;
     const previousPage = currentPage === 1 ? currentPage : currentPage - 1;
-    const baseUrl = `${req.protocol}://${req.get("host")}${req.originalUrl.split("?")[0]}`;
+    const baseUrl = `${req.protocol}://${req.get("host")}${
+      req.originalUrl.split("?")[0]
+    }`;
 
     const tasks = await Task.find({
-      status: {$in: ["todo" , "inProgress"] },
+      status: { $in: ["todo", "inProgress"] },
     })
       .limit(limit)
-      .skip(currentPage - 1).sort({ createdAt: order === 'asc' ? 1 : -1 });
+      .skip(currentPage - 1)
+      .sort({ createdAt: order === "asc" ? 1 : -1 });
 
     let finalResponse = {
       data: tasks,
       pagination: {
-        meta : {
+        meta: {
           itemsPerPage: limit,
-        totalItems: totalTasks,
-        currentPage: currentPage,
-        totalPages: totalPages,
+          totalItems: totalTasks,
+          currentPage: currentPage,
+          totalPages: totalPages,
+          completedTasks: completedTasks,
+          inProgressTasks: inProgressTasks,
+          todoTasks: todoTasks,
         },
-        links : {
-          first : `${baseUrl}?limit=${limit}&page=${1}&order=${order}`,
-          last : `${baseUrl}?limit=${limit}&page=${totalPages}&order=${order}`, 
-          currentPage : `${baseUrl}?limit=${limit}&page=${currentPage}&order=${order}`,
-          nextPage : `${baseUrl}?limit=${limit}&page=${nextPage}&order=${order}`,
-          previousPage : `${baseUrl}?limit=${limit}&page=${previousPage}&order=${order}`,
-        }
+        links: {
+          first: `${baseUrl}?limit=${limit}&page=${1}&order=${order}`,
+          last: `${baseUrl}?limit=${limit}&page=${totalPages}&order=${order}`,
+          currentPage: `${baseUrl}?limit=${limit}&page=${currentPage}&order=${order}`,
+          nextPage: `${baseUrl}?limit=${limit}&page=${nextPage}&order=${order}`,
+          previousPage: `${baseUrl}?limit=${limit}&page=${previousPage}&order=${order}`,
+        },
       },
-    
-    }  
+    };
 
     return res.status(StatusCodes.OK).json(finalResponse);
   } catch (error) {

@@ -1,1 +1,4 @@
 GET http://localhost:3001/tasks?limit=5&page=1&order=asc
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODk1YzVkMjQwMGRlYjhiY2UzOTVjNDYiLCJlbWFpbCI6Im1hcmtAZG9lLmNvbSIsImlhdCI6MTc1NjQ0OTQ5NCwiZXhwIjoxNzU2NDkyNjk0fQ.lqjMLfKYXDZVnH2XZojBFYB1RRMUye-qYItBomVannQ

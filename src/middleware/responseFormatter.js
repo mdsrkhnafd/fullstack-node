@@ -6,7 +6,7 @@ function responseFormatter(req , res, next) {
     res.json = (data) => {
         const response = {
             status: res.statusCode >= 200 && res.statusCode < 300 ? "success" : "error",
-            StatusCode: res.statusCode,
+            statusCode: res.statusCode,
             message: getReasonPhrase(res.statusCode),
         };
 
