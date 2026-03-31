@@ -1,9 +1,13 @@
 [build]
   command = "npm install"
   functions = "netlify/functions"
-  publish = "public"
+  publish = "public" # Create an empty folder named 'public' in your project root
+
+[functions]
+  node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/api"
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true # Ensures Netlify always uses the function for these paths
