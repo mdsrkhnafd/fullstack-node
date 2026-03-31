@@ -24,6 +24,17 @@ const connectDB = async () => {
   }
 };
 
+const router = express.Router();
+
+// This matches the root URL
+router.get("/", (req, res) => {
+  res.send("<h1>API is running</h1>");
+});
+
+// CRITICAL FIX: Mount at "/"
+// Since your routes (like userRouter) already start with "/api"
+app.use("/", router);
+
 // The Handler (This replaces app.listen)
 const handler = serverless(app);
 

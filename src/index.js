@@ -24,6 +24,14 @@ const connectDB = async () => {
   }
 };
 
+// Route definitions (MUST prefix with your function path for local testing)
+const router = express.Router();
+router.get("/", (req, res) => res.send("API is running..."));
+
+// Apply router with the base path Netlify expects
+app.use("/.netlify/functions/api", router);
+app.use("/", router); // add this for local dev
+
 // The Handler (This replaces app.listen)
 const handler = serverless(app);
 
