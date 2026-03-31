@@ -1,8 +1,14 @@
 [build]
   command = "npm install"
-  functions = "src" # This tells Netlify your code is in the src folder
+  functions = "netlify/functions"
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["mongoose"]
 
 [[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/index"
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
