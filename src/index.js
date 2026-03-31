@@ -1,27 +1,33 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
-const configureApp = require("../../settings/config.js");
+const configureApp = require("../../settings/config.js"); // Ensure this path is correct
 
 const app = express();
 app.use(express.json());
+
+// Run your custom config
 configureApp(app);
 
-// Keep connection outside the handler to reuse it
-let cachedDb = null;
-async function connectToDatabase() {
-  if (cachedDb) return cachedDb;
-  cachedDb = await mongoose.connect(process.env.DATABASE_URL, {
-    dbName: process.env.DATABASE_NAME,
-  });
-  return cachedDb;
-}
+// Database Connection Logic (Optimized for Serverless)
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.DATABASE_URL, {
+      dbName: process.env.DATABASE_NAME,
+    });
+    isConnected = true;
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("MongoDB Connection Error:", err);
+  }
+};
 
+// The Handler (This replaces app.listen)
 const handler = serverless(app);
 
 module.exports.handler = async (event, context) => {
-  // Turn off background waiting so the function returns immediately after the response
-  context.callbackWaitsForEmptyEventLoop = false;
-  await connectToDatabase();
+  await connectDB();
   return await handler(event, context);
 };

@@ -1,7 +1,8 @@
 [build]
-  functions = "netlify/functions"
+  command = "npm install"
+  functions = "src" # This tells Netlify your code is in the src folder
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  from = "/*"
+  to = "/.netlify/functions/index"
   status = 200
