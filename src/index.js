@@ -1,13 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
-const configureApp = require("../../settings/config.js"); // Adjust path if needed
+const configureApp = require("../../settings/config.js");
 
 const app = express();
 app.use(express.json());
 configureApp(app);
 
-// MongoDB Connection (must be outside the handler for reuse)
+// Keep connection outside the handler to reuse it
 let cachedDb = null;
 async function connectToDatabase() {
   if (cachedDb) return cachedDb;
@@ -20,6 +20,8 @@ async function connectToDatabase() {
 const handler = serverless(app);
 
 module.exports.handler = async (event, context) => {
-  await connectToDatabase(); // Ensure DB is connected
+  // Turn off background waiting so the function returns immediately after the response
+  context.callbackWaitsForEmptyEventLoop = false;
+  await connectToDatabase();
   return await handler(event, context);
 };
