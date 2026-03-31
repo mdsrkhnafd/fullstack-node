@@ -3,12 +3,7 @@
   functions = "netlify/functions"
   publish = "public"
 
-[functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["mongoose"]
-
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  from = "/*"
+  to = "/.netlify/functions/api"
   status = 200
-  force = true
