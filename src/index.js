@@ -1,41 +1,67 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
-const configureApp = require("../../settings/config.js"); // Ensure this path is correct
+const dotenv = require("dotenv");
+const configureApp = require("./settings/config.js");
+
+// Load environment variables
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 
 const app = express();
 app.use(express.json());
 
-// Run your custom config
+// Configure routes
 configureApp(app);
 
-// Database Connection Logic (Optimized for Serverless)
-let isConnected = false;
+// Logging for debug
+console.log("Environment:", process.env.NODE_ENV);
+console.log("Database URL:", process.env.DATABASE_URL);
+console.log("Database Name:", process.env.DATABASE_NAME);
+
+// -----------------------------
+// MongoDB Connection
+// -----------------------------
+let cachedDb = null;
+
 const connectDB = async () => {
-  if (isConnected) return;
+  if (cachedDb) {
+    console.log("MongoDB already connected");
+    return;
+  }
+
   try {
-    await mongoose.connect(process.env.DATABASE_URL, {
-      dbName: process.env.DATABASE_NAME,
+    cachedDb = await mongoose.connect(process.env.DATABASE_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
-    isConnected = true;
-    console.log("Connected to MongoDB");
+    console.log("✅ Connected to MongoDB");
   } catch (err) {
-    console.error("MongoDB Connection Error:", err);
+    console.error("❌ MongoDB Connection Error:", err.message);
+    throw err;
   }
 };
 
-// Route definitions (MUST prefix with your function path for local testing)
-const router = express.Router();
-router.get("/", (req, res) => res.send("API is running..."));
-
-// Apply router with the base path Netlify expects
-app.use("/.netlify/functions/api", router);
-app.use("/", router); // add this for local dev
-
-// The Handler (This replaces app.listen)
+// -----------------------------
+// Serverless Handler
+// -----------------------------
 const handler = serverless(app);
 
 module.exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   await connectDB();
   return await handler(event, context);
 };
+
+// -----------------------------
+// Local Development Server
+// -----------------------------
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3001;
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => {
+      console.error("Failed to start server:", err.message);
+    });
+}

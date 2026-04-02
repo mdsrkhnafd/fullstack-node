@@ -11,14 +11,12 @@ const expressWinstonLogger = require("../middleware/expressWinston.middleware.js
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpecs = require("./swagger.config.js");
 
-
-
 function configureApp(app) {
   app.use(cors());
 
   let accessLogStream = fs.createWriteStream(
     path.join(__dirname, "../..", "access.log"),
-    { flags: "a" }
+    { flags: "a" },
   );
 
   app.use(
@@ -28,7 +26,7 @@ function configureApp(app) {
         console.log(`Request: ${req.method} ${req.url}`);
         return false;
       },
-    })
+    }),
   );
 
   app.use(responseFormatter);
@@ -40,7 +38,9 @@ function configureApp(app) {
   app.use("/auth", authRouter);
   app.use("/users", usersRouter);
 
-  app.use("/api-docs" , swaggerUi.serve , swaggerUi.setup(swaggerSpecs));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+  app.get("/", (req, res) => res.send("API is running..."));
 
   app.use((req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({

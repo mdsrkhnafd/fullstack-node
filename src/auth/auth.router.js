@@ -35,6 +35,7 @@ const loginValidator = require("../auth/validators/login.validator.js");
  */
 
 authRouter.post("/login", loginValidator, (req, res) => {
+  console.log("LOGIN ROUTE HIT");
   const result = validationResult(req);
 
   if (result.isEmpty()) {
