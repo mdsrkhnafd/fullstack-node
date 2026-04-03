@@ -14,20 +14,30 @@ const app = express();
 app.use(express.json());
 
 // Database Connection Logic (Optimized for Serverless)
-let isConnected = false;
+let cachedDb = null;
+
 const connectDB = async () => {
-  if (isConnected) return;
+  // Return immediately if already connected
+  if (cachedDb) {
+    console.log("✅ Using cached MongoDB connection");
+    return cachedDb;
+  }
+
   try {
-    await mongoose.connect(process.env.DATABASE_URL, {
+    console.log("🔌 Connecting to MongoDB...");
+    const connection = await mongoose.connect(process.env.DATABASE_URL, {
       dbName: process.env.DATABASE_NAME,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Fast timeout for serverless
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 5000,
     });
-    isConnected = true;
-    console.log("✅ Connected to MongoDB");
+
+    cachedDb = connection;
+    console.log("✅ MongoDB connected successfully");
+    return connection;
   } catch (err) {
     console.error("❌ MongoDB Connection Error:", err.message);
-    throw err;
+    throw new Error(`Database connection failed: ${err.message}`);
   }
 };
 
