@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
-const configureApp = require("../../settings/config.js"); // Ensure this path is correct
+const configureApp = require("../../src/settings/config.js"); // Fixed path to src/settings/config.js
 
 const app = express();
 app.use(express.json());
