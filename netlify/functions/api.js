@@ -48,12 +48,19 @@ app.get("/", (req, res) => {
 });
 
 // Mount routes directly
+// Note: Netlify redirects /api/* to the function, so we need to handle both /api/auth and /auth
 const authRouter = require("../../src/auth/auth.router.js");
 const usersRouter = require("../../src/users/users.router.js");
 const tasksRouter = require("../../src/tasks/tasks.router.js");
 
+// Mount at both /api/auth and /auth for flexibility
+app.use("/api/auth", authRouter);
 app.use("/auth", authRouter);
+
+app.use("/api/users", usersRouter);
 app.use("/users", usersRouter);
+
+app.use("/api", tasksRouter);
 app.use("/", tasksRouter);
 
 // Error handling
